@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Prueba1.src.Data;
+using Prueba1.src.Interfaces;
+using Prueba1.src.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,7 @@ builder.Services.AddSwaggerGen();
 
 string connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") ?? "Data Source = app.db"; 
 builder.Services.AddDbContext<ApplicationDBContext>(opt => opt.UseSqlite(connectionString));
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
 var app = builder.Build();
 
