@@ -91,5 +91,16 @@ namespace Prueba1.src.Controllers
             await _usuarioRepo.CrearUsuarioAsync(usuario);
             return Created($"/product/{usuario.Rut}", usuario);
         }
+
+        [HttpDelete("/user/{id}")]
+        public async Task<IActionResult> EliminarUsuario([FromRoute] int id)
+        {
+            var usuario = await _usuarioRepo.EliminarUsuario(id);
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+            return Ok(usuario);
+        }
     }
 }
