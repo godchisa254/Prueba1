@@ -62,7 +62,7 @@ namespace Prueba1.src.Controllers
 
         [HttpPost]
         [Route("/user")]
-        public async Task<IActionResult> CreateProduct([FromBody] ActualizarUsuarioDto usuarioActualizadoDto)
+        public async Task<IActionResult> CrearUsuario([FromBody] ActualizarUsuarioDto usuarioActualizadoDto)
         {
             if (!ModelState.IsValid)
             {
