@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Prueba1.src.DTOs;
 using Prueba1.src.Interfaces;
+using Prueba1.src.Models;
 
 namespace Prueba1.src.Controllers
 {
@@ -37,14 +38,15 @@ namespace Prueba1.src.Controllers
                 Email = u.Email,
                 Genero = u.Genero,
                 FechaNacimiento = u.FechaNacimiento
+                
             }).ToList();
             
             return Ok(usuarioDTO);
         }
 
-                [HttpPut]
+        [HttpPut]
         [Route("/user/{id}")]
-        public async Task<IActionResult> ActualizarUsuario([FromRoute] int id, [FromBody] ActualizarUsuarioDto usuarioActualizadoDto)
+        public async Task<IActionResult> EditarUsuario([FromRoute] int id, [FromBody] ActualizarUsuarioDto usuarioActualizadoDto)
         {
             if(!ModelState.IsValid)
             {
@@ -56,6 +58,38 @@ namespace Prueba1.src.Controllers
                 return NotFound();
             }
             return Ok(modeloUsuario);
+        }
+
+        [HttpPost]
+        [Route("/user")]
+        public async Task<IActionResult> CreateProduct([FromBody] ActualizarUsuarioDto usuarioActualizadoDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var usuario = new Usuario
+            {
+                Rut = usuarioActualizadoDto.Rut,
+                Nombre = usuarioActualizadoDto.Nombre,
+                Email = usuarioActualizadoDto.Email,
+                Genero = usuarioActualizadoDto.Genero,
+                FechaNacimiento = usuarioActualizadoDto.FechaNacimiento
+            };
+            
+            var generos = new[] { "masculino", "femenino", "otro", "prefiero no decirlo" };
+
+            if (string.IsNullOrEmpty(usuario.Genero) || !generos.Contains(usuario.Genero.ToLower()))
+            {
+                return BadRequest("El filtro para el género debe ser 'masculino', 'femenino', 'otro' o 'prefiero no decirlo'.");
+            }
+
+            if(_usuarioRepo.UsuarioExiste(usuario.Rut))
+            {
+                return Conflict("El RUT ya existe.");
+            }
+            await _usuarioRepo.CrearUsuarioAsync(usuario);
+            return Created($"/product/{usuario.Rut}", usuario);
         }
     }
 }
