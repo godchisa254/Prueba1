@@ -18,31 +18,62 @@ namespace Prueba1.src.Controllers
         }
 
         [HttpGet]
-        [Route("/user/{genero}")]
-        public async Task<IActionResult> ObtenerTodosUsuarios(string genero)
+        [Route("/user")]
+        public async Task<IActionResult> ObtenerTodosUsuarios(string? genero, string? sort)
         {
             var generos = new[] { "masculino", "femenino", "otro", "prefiero no decirlo" };
-
-            if (!generos.Contains(genero.ToLower()))
-            {
-                return BadRequest("El filtro para el género debe ser 'masculino', 'femenino', 'otro' o 'prefiero no decirlo'.");
-            }
             var usuarios = await _usuarioRepo.ObtenerTodosASync();
-            
-            var usuarioDTO = usuarios
-            .Where(u => u.Genero.Equals(genero, StringComparison.OrdinalIgnoreCase)) //ignora mayusculas y minusculas
-            .Select(u => new ActualizarUsuarioDto
+
+            var usuarioDTO = usuarios.Select(u => new ActualizarUsuarioDto
             {
                 Rut = u.Rut,
                 Nombre = u.Nombre,
                 Email = u.Email,
                 Genero = u.Genero,
                 FechaNacimiento = u.FechaNacimiento
-                
             }).ToList();
-            
+
+            if (string.IsNullOrWhiteSpace(genero) && string.IsNullOrWhiteSpace(sort))
+            {
+                return Ok(usuarioDTO);
+            }
+
+            if (!string.IsNullOrWhiteSpace(genero) && !generos.Contains(genero.ToLower()))
+            {
+                return BadRequest("El filtro para el género debe ser 'masculino', 'femenino', 'otro' o 'prefiero no decirlo'.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(sort))
+            {
+                if (sort == "asc")
+                {
+                    usuarios = usuarios.OrderBy(u => u.Nombre).ToList();
+                }
+                else if (sort == "desc")
+                {
+                    usuarios = usuarios.OrderByDescending(u => u.Nombre).ToList();
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(genero))
+            {
+                usuarios = usuarios
+                    .Where(u => u.Genero.Equals(genero, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
+            usuarioDTO = usuarios.Select(u => new ActualizarUsuarioDto
+            {
+                Rut = u.Rut,
+                Nombre = u.Nombre,
+                Email = u.Email,
+                Genero = u.Genero,
+                FechaNacimiento = u.FechaNacimiento
+            }).ToList();
+
             return Ok(usuarioDTO);
         }
+
 
         [HttpPut]
         [Route("/user/{id}")]
