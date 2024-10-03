@@ -1,3 +1,4 @@
+using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Prueba1.src.Data;
 using Prueba1.src.Interfaces;
@@ -5,6 +6,7 @@ using Prueba1.src.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
+Env.Load();
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -32,8 +34,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-
 
 
 app.Run();
