@@ -22,7 +22,7 @@ namespace Prueba1.src.Controllers
         {
             var generos = new[] { "masculino", "femenino", "otro", "prefiero no decirlo" };
 
-            if (string.IsNullOrEmpty(genero) || !generos.Contains(genero.ToLower()))
+            if (!generos.Contains(genero.ToLower()))
             {
                 return BadRequest("El filtro para el género debe ser 'masculino', 'femenino', 'otro' o 'prefiero no decirlo'.");
             }
@@ -40,6 +40,22 @@ namespace Prueba1.src.Controllers
             }).ToList();
             
             return Ok(usuarioDTO);
+        }
+
+                [HttpPut]
+        [Route("/user/{id}")]
+        public async Task<IActionResult> ActualizarUsuario([FromRoute] int id, [FromBody] ActualizarUsuarioDto usuarioActualizadoDto)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var modeloUsuario = await _usuarioRepo.ActualizarUsuario(id, usuarioActualizadoDto);
+            if (modeloUsuario == null)
+            {
+                return NotFound();
+            }
+            return Ok(modeloUsuario);
         }
     }
 }
