@@ -99,6 +99,10 @@ namespace Prueba1.src.Controllers
             {
                 return BadRequest(ModelState);
             }
+            if (usuarioActualizadoDto.FechaNacimiento >= DateOnly.FromDateTime(DateTime.Now))
+            {
+                return BadRequest("La fecha de nacimiento debe ser anterior a la fecha actual.");
+            }
             var usuario = new Usuario
             {
                 Rut = usuarioActualizadoDto.Rut,
@@ -120,7 +124,7 @@ namespace Prueba1.src.Controllers
                 return Conflict("El RUT ya existe.");
             }
             await _usuarioRepo.CrearUsuarioAsync(usuario);
-            return Created($"/product/{usuario.Rut}", usuario);
+            return Created($"/product/{usuario.Rut}", usuarioActualizadoDto);
         }
 
         [HttpDelete("/user/{id}")]
