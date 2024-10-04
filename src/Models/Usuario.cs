@@ -20,6 +20,6 @@ namespace Prueba1.src.Models
         [RegularExpression("^(masculino|femenino|otro|prefiero no decirlo)$", ErrorMessage = "El género debe ser 'masculino', 'femenino', 'otro' o 'prefiero no decirlo'.")]
         public required string Genero { get; set; }
         [DataType(DataType.Date, ErrorMessage = "La fecha debe ser anterior a la actual.")]
-        public required DateTime FechaNacimiento { get; set; }
+        public required DateOnly FechaNacimiento { get; set; }
     }
 }
