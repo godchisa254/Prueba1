@@ -74,23 +74,34 @@ namespace Prueba1.src.Controllers
             return Ok(usuarioDTO);
         }
 
-
         [HttpPut]
         [Route("/user/{id}")]
         public async Task<IActionResult> EditarUsuario([FromRoute] int id, [FromBody] ActualizarUsuarioDto usuarioActualizadoDto)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            if (usuarioActualizadoDto.FechaNacimiento >= DateOnly.FromDateTime(DateTime.Now))
+            {
+                return BadRequest("La fecha de nacimiento debe ser anterior a la fecha actual.");
+            }
+
+            var generos = new[] { "masculino", "femenino", "otro", "prefiero no decirlo" };
+            if (string.IsNullOrEmpty(usuarioActualizadoDto.Genero) || !generos.Contains(usuarioActualizadoDto.Genero.ToLower()))
+            {
+                return BadRequest("El género debe ser 'masculino', 'femenino', 'otro' o 'prefiero no decirlo'.");
+            }
+
             var modeloUsuario = await _usuarioRepo.ActualizarUsuario(id, usuarioActualizadoDto);
             if (modeloUsuario == null)
             {
                 return NotFound();
             }
-            return Ok(modeloUsuario);
-        }
 
+            return Ok(usuarioActualizadoDto);
+        }
         [HttpPost]
         [Route("/user")]
         public async Task<IActionResult> CrearUsuario([FromBody] ActualizarUsuarioDto usuarioActualizadoDto)
