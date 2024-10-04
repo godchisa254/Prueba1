@@ -23,7 +23,7 @@ namespace Prueba1.src.Data
                     var usuarioFaker = new Faker<Usuario>()
                         .RuleFor(p => p.Rut, f => GenerateUniqueRandomRut(rutsExistentesUsuarios))
                         .RuleFor(p => p.Nombre , f => f.Name.FullName())
-                        .RuleFor(p => p.Email, f => f.PickRandom(new[] { "poleras", "pantalones", "sombreros"}))
+                        .RuleFor(p => p.Email, f => f.Internet.Email())
                         .RuleFor(p => p.Genero, f => f.PickRandom(new[] { "masculino", "femenino", "otro", "prefiero no decirlo"}))
                         .RuleFor(p => p.FechaNacimiento , f => DateOnly.FromDateTime(f.Date.Past(100, DateTime.Now)));
                     
